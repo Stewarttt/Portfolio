@@ -1,0 +1,18 @@
+[4] Create 3000pc-rendezvous-thread.c by changing 3000pc-rendezvous.c to use two threads in one process, rather than two processes. Use pthread_create() to create the thread rather than fork(), and replace the mmap() with malloc(). Be sure to make the producer run in the new thread. Explain what you changed. Use the source for thread_example.c below to see how to create threads. Note the declaration of thread_start() and how parameters are passed:
+	Firstly, I commented out the mmap call for s and replaced it with "s = (shared *) malloc (sizeof(shared));"
+	Next, I added two new entries to the shared struct:
+		int count;
+		int con_interval;
+	In main, right after initializing s with "init_shared(s)", I use the following lines:
+		s->count = count;
+		s->con_interval = con_interval;
+	This allows the children to have access to the count and interval values
+	Next, I create a new thread with "error = pthread_create(&tid, NULL, thread_start, s);"
+		At the beginning of main, we add "pthread_t tid;"
+		We also make a new function called "thread_start"
+			This copies over the shared struct and initializes "s->con_pid = getpid();"
+			After, it runs consumer with "consumer(s, s->count, s->con_interval);"
+	In main, the old thread is still running, where it encounters a call to sleep(1)
+		After, it runs "s->prod_pid = getpid();" to initialize prod_pid in s
+		Then it runs the producer method with "producer(s, count, prod_interval);"
+	After this, the two threads will execute normally like 3000pc-rendezvous did originally

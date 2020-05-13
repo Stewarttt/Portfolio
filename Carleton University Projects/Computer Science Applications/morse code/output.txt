@@ -1,0 +1,170 @@
+The following is a list of test cases for bitMath.c:
+Enter 1st 8-bit sequence: 00000000
+Enter 2nd 8-bit sequence: 00000000
+
+  00000000 (0)
+  00000000 (0)
+----------------
+  00000000 (0)
+
+Enter 1st 8-bit sequence: 00000001
+Enter 2nd 8-bit sequence: 00000000
+
+  00000001 (1)
+  00000000 (0)
+----------------
+  00000001 (1)
+
+Enter 1st 8-bit sequence: 00000000
+Enter 2nd 8-bit sequence: 00000001
+
+  00000000 (0)
+  00000001 (1)
+----------------
+  00000001 (1)
+
+Enter 1st 8-bit sequence: 11111111
+Enter 2nd 8-bit sequence: 00000000
+
+  11111111 (-1)
+  00000000 (0)
+----------------
+  11111111 (-1)
+
+Enter 1st 8-bit sequence: 11111111
+Enter 2nd 8-bit sequence: 00000001
+
+  11111111 (-1)
+  00000001 (1)
+----------------
+  00000000 (0)
+
+Enter 1st 8-bit sequence: 11111111
+Enter 2nd 8-bit sequence: 10000000
+
+  11111111 (-1)
+  10000000 (-128)
+----------------
+OVERFLOW DETECTED
+
+Enter 1st 8-bit sequence: 10000000
+Enter 2nd 8-bit sequence: 10101010
+
+  10000000 (-128)
+  10101010 (-86)
+----------------
+OVERFLOW DETECTED
+
+Enter 1st 8-bit sequence: 10101010
+Enter 2nd 8-bit sequence: 10001000
+
+  10101010 (-86)
+  10001000 (-120)
+----------------
+OVERFLOW DETECTED
+
+Enter 1st 8-bit sequence: 10000001
+Enter 2nd 8-bit sequence: 00000001
+
+  10000001 (-127)
+  00000001 (1)
+----------------
+  10000010 (-126)
+
+Enter 1st 8-bit sequence: 10000001
+Enter 2nd 8-bit sequence: 11111111
+
+  10000001 (-127)
+  11111111 (-1)
+----------------
+  10000000 (-128)
+
+Enter 1st 8-bit sequence: 00000001
+Enter 2nd 8-bit sequence: 01111110
+
+  00000001 (1)
+  01111110 (126)
+----------------
+  01111111 (127)
+
+Enter 1st 8-bit sequence: 00000010
+Enter 2nd 8-bit sequence: 01111110
+
+  00000010 (2)
+  01111110 (126)
+----------------
+OVERFLOW DETECTED
+
+Enter 1st 8-bit sequence: 01111111
+Enter 2nd 8-bit sequence: 11111111
+
+  01111111 (127)
+  11111111 (-1)
+----------------
+  01111110 (126)
+
+Enter 1st 8-bit sequence: 01111111
+Enter 2nd 8-bit sequence: 10000000
+
+  01111111 (127)
+  10000000 (-128)
+----------------
+  11111111 (-1)
+
+Enter 1st 8-bit sequence: 01111111
+Enter 2nd 8-bit sequence: 10000001
+
+  01111111 (127)
+  10000001 (-127)
+----------------
+  00000000 (0)
+
+Enter 1st 8-bit sequence: 01111111     
+Enter 2nd 8-bit sequence: 00000001
+
+  01111111 (127)
+  00000001 (1)
+----------------
+OVERFLOW DETECTED
+
+Enter 1st 8-bit sequence: 00001010
+Enter 2nd 8-bit sequence: 00000111
+
+  00001010 (10)
+  00000111 (7)
+----------------
+  00010001 (17)
+
+Enter 1st 8-bit sequence: 11110110
+Enter 2nd 8-bit sequence: 11111001
+
+  11110110 (-10)
+  11111001 (-7)
+----------------
+  11101111 (-17)
+
+Enter 1st 8-bit sequence: 10000000
+Enter 2nd 8-bit sequence: 00000001
+
+  10000000 (-128)
+  00000001 (1)
+----------------
+  10000001 (-127)
+
+Enter 1st 8-bit sequence: 01110011
+Enter 2nd 8-bit sequence: 00111001
+
+  01110011 (115)
+  00111001 (57)
+----------------
+OVERFLOW DETECTED
+
+Enter 1st 8-bit sequence: 10000000
+Enter 2nd 8-bit sequence: 10000001
+
+  10000000 (-128)
+  10000001 (-127)
+----------------
+OVERFLOW DETECTED
+
+

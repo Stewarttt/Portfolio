@@ -1,0 +1,53 @@
+Question 1 A)
+	Open winGHCI
+	load:
+		comp3007_w19_101041125_a4_1a.hs
+	type:
+		countZerofree [997, 998, 999, 1000, 1001]
+	Returns:
+		3
+Question 2 B)
+	Open SWI-Prolog and open comp3007_w19_101041125_a4_1b.pl
+	Type: 
+		countZerofree ([997, 998, 999, 1000, 1001], X).
+	Returns:
+		X = 3 ;
+		false.
+	Type: 
+		countZerofree ([997, 998, 999, 1000, 1001], 1).
+		false.
+	Type: 
+		countZerofree ([997, 998, 999, 1000, 1001], 2).
+		false.
+	Type: 
+		countZerofree ([997, 998, 999, 1000, 1001], 3).
+		true.
+	Type: 
+		countZerofree ([997, 998, 999, 1000, 1001], 4).
+		false.
+Question 2:
+	See PDF file
+Question 3:
+	Open SWI-Prolog and open comp3007_w19_101041125_a4_3.pl
+	Type:
+		entryPoint(1, 15)
+			This will check all possible ways to cross the river in 1 to 15 crossings
+			This function can take a lot of time to buffer new intervals
+				for example, when it transitions between all passages of size 9 
+				to all passages of size 11 it pauses for a bit. Waiting will 
+				resolve this.
+	Returns:
+		All possible paths (there are a lot of them)
+		Returns true if a valid search is conducted
+			a valid search means that the start and end ranges (in entryPoint) are logical, that is, the start value is less then or equal to the end value
+			this means, even if a search returns no possible paths, the method will return true, indicating that the search was at least successful in 
+				finding that no path existed.
+			
+	My tuple representation represents the number of people in the boat at a given crossing
+		we assume the boat starts at the west side and moves to the east side
+		the boat always moves from west to east, or from east to west during each crossing
+		the tuple represents the number of entities crossing in the following format:
+			(Neanderthal, Human, Saber-tooth Tiger)
+			the number represents the number of the entities crossing, for example:
+				(1, 0, 0) means 1 Neanderthal is crossing the river
+		Take the following example: [(1, 0, 0), (1, 0, 0)] this means a Neanderthal crosses to the west side. After that, it crosses back to the right side. 

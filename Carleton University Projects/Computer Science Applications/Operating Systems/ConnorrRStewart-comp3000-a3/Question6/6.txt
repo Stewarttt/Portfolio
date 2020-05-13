@@ -1,0 +1,13 @@
+[2] Would it have been harder to make /dev/yourtask report usernames rather than uids? Explain, outlining at least one strategy for outputting usernames rather than uid's:
+	Yes, it would be harder to make /dev/yourtask report usernames rather than uids.
+		As we have learned, the unix kernal passes "necessary" information in its task_structs to lower overhead
+		The task_struct is not going to have both a uid and username in it, as it would then contain redundant information
+		since the uid is going to be shorter then the username in most cases, only user id's are stored in the task struct.
+	Strategies:
+		1. Usernames and user IDs stored within "/etc/passwd", so we could always open the file, iterate through it looking for the UID, and find its corresponding username
+		2. We could setup some functions to enable running BASH scripts from within the c code, and run "id -un -UID"
+			according to "man id", id prints real and effective user and group IDs
+			also within its man page we see that -un can be used to get the real name of the user
+			thus, if we wanted to find the username of UID 1000, we could run "ls -un 1000" within the c code
+		3. If the C program bas BASH scripts enabled within it, a wrapper for the following BASH script "getent passwd -UID | cut -d: -f1" would work
+			if someone wanted to find the username associated with UID 1000, they could enter "getent passwd 1000 | cut -d: -f1"

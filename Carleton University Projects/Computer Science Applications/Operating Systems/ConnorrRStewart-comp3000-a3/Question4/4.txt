@@ -1,0 +1,23 @@
+[2] Answer the following questions on the ones module:
+	What code in the ones module causes /dev/ones to be created:
+		In ones.c, the device is created under the ones_init function.
+		Notability, the character device is registered by the line:
+			ones_major = register_chrdev(0, DEVICE_NAME, &ones_fops);
+		Finally, the character device is "created" by the line:
+			ones_device = device_create(ones_class, NULL, MKDEV(ones_major, 0), NULL, DEVICE_NAME);
+		Also note that the following struct must be defined for device_create to be called, meaning this line is also needed as well:
+			ones_class = class_create(THIS_MODULE, CLASS_NAME);
+	What command(s) could you use to create a file ones-copy that would provide access to the character device of /dev/ones:
+		We can use mknod to create a device to use the file
+		First, mount the device if it not mounted already with;
+			sudo insmod ones.ko
+		Next, find the major and minor number of the device with:
+			ls -l /dev/ones
+		For me, I get:
+			cr--r--r-- 1 root root 243, 0 Mar 24 07:36 /dev/ones
+		This gives us a major number of 243 and a minor number of 0
+		So, use the following command to make a new character device:
+			sudo mknod ones-copy c 243 0
+		We can verify that "ones-copy" copies the behaviour of ones with the following command:
+			cat ones-copy
+		Running the above prints a terminal full of 1 characters, which is the same behaviour as running the command "cat /dev/ones"

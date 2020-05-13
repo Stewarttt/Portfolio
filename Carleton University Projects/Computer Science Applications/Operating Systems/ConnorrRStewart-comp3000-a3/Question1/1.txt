@@ -1,0 +1,22 @@
+[4] Create 3000pc-fifo-consumer.c and 3000pc-fifo-producer.c, two separate programs that do the same thing as 3000pc-fifo.c's consumer and producer, respectively. They should communicate using a named pipe specified as the last command line argument, and you should remove unneeded arguments and code. (So 3000pc-fifo-consumer should take a count, con_interval, and pipe filename as arguments, while 3000pc-fifo-producer should take a count, prod_interval, and pipe filename as arguments.)
+	Explain briefly the relationship between your two new programs and the original, outlining what changes you had to make:
+		Firstly, I copied 300pc-fifo.c to the consumer and the producer files
+		Then, i removed consumer related functions from producer, and vice-versa
+			With consumer:
+				Remove functions producer(), queue_word(), and pick_word()
+			With producer:
+				Remove functions consumer(), get_next_word(), output_word()
+		In both consumer and producers files:
+			Remove the call to fork from main
+			Get rid of the conditional if statement after the fork call so that consumers file has a function call to consumer, and producers files has a function call to producer
+			Remove the call to pipe and replace it with a call to open
+				This will get the file descriptor for the producer and consumer files
+				For producer:
+					use: pipefd = open(pipe_fn, O_WRONLY);
+					O_WRONLY: this means write-only file descriptor, this is needed for the producer (he writes to the consumer)
+				For consumer:
+					use: pipefd = open(pipe_fn, O_RDONLY);
+					O_RDONLY: this means read-only file descriptor, this is needed for the consumer (he reads from the producer)
+		Finally,
+			Some code cleanup is needed, such as removing unused variables and declarations (like pid) and reformatting the function arguments to work with a single interval and a filename for a pipe
+	

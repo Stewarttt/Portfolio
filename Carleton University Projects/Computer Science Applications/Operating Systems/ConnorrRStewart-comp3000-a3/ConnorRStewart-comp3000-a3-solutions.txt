@@ -1,0 +1,359 @@
+Name: Connor Raymond Stewart
+ID: 101041125
+Class: COMP3000 Winter 2020
+Deliverable: Assignment 3
+
+[4] Create 3000pc-fifo-consumer.c and 3000pc-fifo-producer.c, two separate programs that do the same thing as 3000pc-fifo.c's consumer and producer, respectively. They should communicate using a named pipe specified as the last command line argument, and you should remove unneeded arguments and code. (So 3000pc-fifo-consumer should take a count, con_interval, and pipe filename as arguments, while 3000pc-fifo-producer should take a count, prod_interval, and pipe filename as arguments.)
+	Explain briefly the relationship between your two new programs and the original, outlining what changes you had to make:
+		Firstly, I copied 300pc-fifo.c to the consumer and the producer files
+		Then, i removed consumer related functions from producer, and vice-versa
+			With consumer:
+				Remove functions producer(), queue_word(), and pick_word()
+			With producer:
+				Remove functions consumer(), get_next_word(), output_word()
+		In both consumer and producers files:
+			Remove the call to fork from main
+			Get rid of the conditional if statement after the fork call so that consumers file has a function call to consumer, and producers files has a function call to producer
+			Remove the call to pipe and replace it with a call to open
+				This will get the file descriptor for the producer and consumer files
+				For producer:
+					use: pipefd = open(pipe_fn, O_WRONLY);
+					O_WRONLY: this means write-only file descriptor, this is needed for the producer (he writes to the consumer)
+				For consumer:
+					use: pipefd = open(pipe_fn, O_RDONLY);
+					O_RDONLY: this means read-only file descriptor, this is needed for the consumer (he reads from the producer)
+		Finally,
+			Some code cleanup is needed, such as removing unused variables and declarations (like pid) and reformatting the function arguments to work with a single interval and a filename for a pipe
+
+[4] A classmate was discussing 3000pc-rendezvous.c and said "I don't understand why that rendezvous program has to be so complicated, it should just use regular ints rather than those weird semaphores." To try and answer your classmate's question, do the following to create and analyze 3000pc-rendezvous-simple.c on a VM with at least two cores (check /proc/cpuinfo):
+	[1] Remove all the pthread_ and sem_ declarations and replace them with standard C types (or structs of standard C types). (If you remove the includes for semaphore.h and pthread.h, these will become compilation errors that you can then fix.) Hint: you don't need anything fancy:
+		convert entry, cond_mutex, queue_nonempty, and queue_nonfull to be ints. 
+	[1] Remove all pthread_ function calls, replace with functions of your own design. For semaphores, when sleeping just busy wait (loop forever until the condition is met). For condition variables, do short sleeps in between checking the condition, e.g., usleep(1000):
+		Add four functions to replace the old ones:
+			void waitSem(int * sem) {
+				while (*sem == 0) {
+				}
+				*sem = 0;
+			}
+
+			void postSem(int * sem) {
+				*sem = 1;
+			}
+
+			void signalCon(int * cond) {
+				*cond = 0;
+			}
+
+			void waitCon(int * cond, int * sem) {
+				while (*cond) {
+					postSem(sem);
+					usleep(1000);
+					waitSem(sem);
+				}
+
+				*cond = 1;
+			}
+	[1] Run multiple tests. Does your modified program run correctly? Be sure to test with no pauses and lots of events (at least 10,000, preferably many more). How did your modified program behave compared to the original:
+		./3000pc-rendezvous 10000 100 20
+			Result:
+				Producer sleeping for 1 second...
+				Word 1: X-ray
+				Consumer sleeping for 1 second...
+				ERROR: No room for producer after waiting!
+				Word 2: Oscar
+				Word 3: India
+				Word 4: Whiskey
+				Word 5: Lima
+				Word 6: Foxtrot
+				Word 7: Kilo
+				Word 8: Kilo
+				Word 9: Alpha
+				Word 10: Tango
+				Word 11: Mike
+				Word 12: Delta
+				Word 13: India
+				Word 14: Whiskey
+				Word 15: Kilo
+				Word 16: Mike
+				Word 17: Oscar
+				Word 18: Dash
+				Word 19: Kilo
+				Word 20: Echo
+				Word 21: X-ray
+				Consumer sleeping for 1 second...
+				Word 22: Alpha
+				Word 23: Zulu
+				Word 24: Charlie
+				Word 25: Papa
+				Word 26: Papa
+				Word 27: Tango
+				Word 28: Bravo
+				Word 29: Papa
+				Word 30: Uniform
+				Word 31: Delta
+				Word 32: Quebec
+				Word 33: Foxtrot
+				Word 34: Golf
+				Word 35: Yankee
+				Word 36: Charlie
+				Word 37: Juliet
+				Word 38: Zulu
+				Word 39: Tango
+				Word 40: Sierra
+				Word 41: Whiskey
+				Consumer sleeping for 1 second...
+				Word 42: Dash
+				Word 43: India
+				Word 44: Lima
+				Word 45: Kilo
+				Word 46: Kilo
+				Word 47: Uniform
+				Word 48: Delta
+				Word 49: Whiskey
+				Word 50: November
+				Word 51: Kilo
+				Word 52: Victor
+				Word 53: Lima
+				Word 54: Whiskey
+				Word 55: Bravo
+				Word 56: Charlie
+				Word 57: November
+				Word 58: X-ray
+				Word 59: India
+				Word 60: Golf
+				Word 61: Mike
+				Consumer sleeping for 1 second...
+				Word 62: Uniform
+				Word 63: Charlie
+				Word 64: Zulu
+				Word 65: Quebec
+				Word 66: Foxtrot
+				Word 67: Papa
+				Word 68: Dash
+				Word 69: Yankee
+				Word 70: Sierra
+				Word 71: Uniform
+				Word 72: Papa
+				Word 73: Tango
+				Word 74: Papa
+				Word 75: November
+				Word 76: Alpha
+				Word 77: Alpha
+				Word 78: Papa
+				Word 79: Papa
+				Word 80: Hotel
+				Word 81: Tango
+				Consumer sleeping for 1 second...
+				Producer sleeping for 1 second...
+				Word 82: Yankee
+				ERROR: No room for producer after waiting!
+			Original:
+				Runs correctly without any error messages
+		./3000pc-rendezvous 100000 1000 2000
+			Result:
+				Producer sleeping for 1 second...
+				Word 1: Zulu
+				Consumer sleeping for 1 second...
+				ERROR: No room for producer after waiting!
+				Word 2: India
+				Word 3: Uniform
+				Word 4: Mike
+				Word 5: Oscar
+				Word 6: Delta
+				Word 7: Mike
+				Word 8: Dash
+				Word 9: Hotel
+				Word 10: Tango
+				Word 11: Quebec
+				Word 12: Echo
+				Word 13: X-ray
+				Word 14: Whiskey
+				Word 15: Mike
+				Word 16: Hotel
+				Word 17: India
+				Word 18: Romeo
+				Word 19: Uniform
+				Word 20: Hotel
+				Word 21: Bravo
+				Word 22: November
+				Word 23: Delta
+				Word 24: Yankee
+				Word 25: Whiskey
+				Word 26: November
+				Word 27: Sierra
+				Word 28: November
+				Word 29: Charlie
+				Word 30: Quebec
+				Word 31: Romeo
+				Word 32: November
+				Word 33: X-ray
+				ERROR: Nothing for consumer after waiting!
+				Word 33: X-ray
+				Word 34: Dash
+				Word 35: November
+				Word 36: Kilo
+				Word 37: Lima
+				Word 38: Oscar
+				Word 39: Golf
+				Word 40: Zulu
+				Word 41: Victor
+				Word 42: Romeo
+				Word 43: Oscar
+				Word 44: Golf
+				Word 45: Lima
+				Word 46: Foxtrot
+				Word 47: X-ray
+				Word 48: Yankee
+				Word 49: Uniform
+				Word 50: Charlie
+				Word 51: Quebec
+				Word 52: Zulu
+				Word 53: Uniform
+				Word 54: Romeo
+				Word 55: Papa
+				Word 56: Yankee
+				Word 57: Zulu
+				Word 58: Papa
+				Word 59: Uniform
+				Word 60: Delta
+				Word 61: Romeo
+				Word 62: Sierra
+				Word 63: Alpha
+				Word 64: Juliet
+				Word 65: Whiskey
+			Original:
+				Runs correctly without any error messages
+		./3000pc-rendezvous 100000 200 30
+			Result:
+				Producer sleeping for 1 second...
+				Word 1: Hotel
+				Consumer sleeping for 1 second...
+				ERROR: No room for producer after waiting!
+				Word 2: November
+				Word 3: Mike
+				Word 4: Victor
+				Word 5: Papa
+				Word 6: Echo
+				Word 7: Echo
+				Word 8: Lima
+				Word 9: Tango
+				Word 10: Lima
+				Word 11: X-ray
+				Word 12: November
+				Word 13: Tango
+				Word 14: Zulu
+				Word 15: India
+				Word 16: Tango
+				Word 17: Foxtrot
+				Word 18: Sierra
+				Word 19: Bravo
+				Word 20: Foxtrot
+				Word 21: Alpha
+				Word 22: Hotel
+				Word 23: Delta
+				Word 24: Tango
+				Word 25: Uniform
+				Word 26: India
+				Word 27: Tango
+				Word 28: Golf
+				Word 29: X-ray
+				ERROR: No room for producer after waiting!
+			Original:
+				Runs correctly without any error messages
+	[1] Is your modified program handling concurrency properly? Specifically, is your replacement code good enough to replace the pthead_ routines? Discuss in light of your results and what we have discussed regarding concurrency:
+		My program is not handling concurrency properly, and my replacement code is not good enough to replace the pthead_routines.
+		The code I am using is not able to synchronize perfectly without semaphores and mutexes, causing deadlocks and timing errors to occur
+		With very large runs, these errors can quickly accumulate, causing the program to freeze
+
+[4] Create 3000pc-rendezvous-thread.c by changing 3000pc-rendezvous.c to use two threads in one process, rather than two processes. Use pthread_create() to create the thread rather than fork(), and replace the mmap() with malloc(). Be sure to make the producer run in the new thread. Explain what you changed. Use the source for thread_example.c below to see how to create threads. Note the declaration of thread_start() and how parameters are passed:
+	Firstly, I commented out the mmap call for s and replaced it with "s = (shared *) malloc (sizeof(shared));"
+	Next, I added two new entries to the shared struct:
+		int count;
+		int con_interval;
+	In main, right after initializing s with "init_shared(s)", I use the following lines:
+		s->count = count;
+		s->con_interval = con_interval;
+	This allows the children to have access to the count and interval values
+	Next, I create a new thread with "error = pthread_create(&tid, NULL, thread_start, s);"
+		At the beginning of main, we add "pthread_t tid;"
+		We also make a new function called "thread_start"
+			This copies over the shared struct and initializes "s->con_pid = getpid();"
+			After, it runs consumer with "consumer(s, s->count, s->con_interval);"
+	In main, the old thread is still running, where it encounters a call to sleep(1)
+		After, it runs "s->prod_pid = getpid();" to initialize prod_pid in s
+		Then it runs the producer method with "producer(s, count, prod_interval);"
+	After this, the two threads will execute normally like 3000pc-rendezvous did originally
+
+[2] Answer the following questions on the ones module:
+	What code in the ones module causes /dev/ones to be created:
+		In ones.c, the device is created under the ones_init function.
+		Notability, the character device is registered by the line:
+			ones_major = register_chrdev(0, DEVICE_NAME, &ones_fops);
+		Finally, the character device is "created" by the line:
+			ones_device = device_create(ones_class, NULL, MKDEV(ones_major, 0), NULL, DEVICE_NAME);
+		Also note that the following struct must be defined for device_create to be called, meaning this line is also needed as well:
+			ones_class = class_create(THIS_MODULE, CLASS_NAME);
+	What command(s) could you use to create a file ones-copy that would provide access to the character device of /dev/ones:
+		We can use mknod to create a device to use the file
+		First, mount the device if it not mounted already with;
+			sudo insmod ones.ko
+		Next, find the major and minor number of the device with:
+			ls -l /dev/ones
+		For me, I get:
+			cr--r--r-- 1 root root 243, 0 Mar 24 07:36 /dev/ones
+		This gives us a major number of 243 and a minor number of 0
+		So, use the following command to make a new character device:
+			sudo mknod ones-copy c 243 0
+		We can verify that "ones-copy" copies the behaviour of ones with the following command:
+			cat ones-copy
+		Running the above prints a terminal full of 1 characters, which is the same behaviour as running the command "cat /dev/ones"
+
+[4] Create a new kernel module yourtask.c, based on newgetpid.c, that creates a character device /dev/yourtask. When you write a PID value (such as 5112) to /dev/yourtask, on the next read it returns one of the following strings:
+		Task 5112 is yours!
+		Task 5112 belongs to uid 1200!
+		Task 5112 is yours but acts as 1200!
+		Task 5112 is 1200's but acts as you!
+		The appropriate answer should be determined by the values of the given process's (task's) uid and euid when compared to the uid and euid of the process reading /dev/yourtask. (Your solution gets two points for handing the write correctly and two points for handling the read correctly.)
+	For this problem, we must make the following additions to newgetpid.c
+		First, we must change "#define DEVICE_NAME" to "yourtask"
+		After, we must create a new global level integer:
+			Outside of all function declarations, at the top of the function, add:
+				int global_pid = -1;
+		Next, we must add the following function:
+			static ssize_t newgetpid_write(struct file *f, const char *buf, size_t len, loff_t *offset) {
+				int response, ret;
+
+				ret = kstrtoint_from_user(buf, len, 0, &response);
+
+				global_pid = response;
+
+				return len;
+			}
+		In newgetpid_read, we must add the following:
+			int uid, euid, ppid, peuid;
+			char message[255];
+			char addition[60];
+			thepid = task_tgid_vnr(current);
+			uid = thepid;
+
+			euid = (current->cred->euid).val;
+
+			ppid = current->parent->pid;
+			peuid = (current->parent->cred->euid).val;
+		After, we must add a set of conditional if statements which evaluate the ID values to the message to produce a response generated with snprintf and stored in message
+			I set the machine to display an error message if global_pid is -1 (its default value), as to prompt the user to actually write something in
+
+[2] Would it have been harder to make /dev/yourtask report usernames rather than uids? Explain, outlining at least one strategy for outputting usernames rather than uid's:
+	Yes, it would be harder to make /dev/yourtask report usernames rather than uids.
+		As we have learned, the unix kernal passes "necessary" information in its task_structs to lower overhead
+		The task_struct is not going to have both a uid and username in it, as it would then contain redundant information
+		since the uid is going to be shorter then the username in most cases, only user id's are stored in the task struct.
+	Strategies:
+		1. Usernames and user IDs stored within "/etc/passwd", so we could always open the file, iterate through it looking for the UID, and find its corresponding username
+		2. We could setup some functions to enable running BASH scripts from within the c code, and run "id -un -UID"
+			according to "man id", id prints real and effective user and group IDs
+			also within its man page we see that -un can be used to get the real name of the user
+			thus, if we wanted to find the username of UID 1000, we could run "ls -un 1000" within the c code
+		3. If the C program bas BASH scripts enabled within it, a wrapper for the following BASH script "getent passwd -UID | cut -d: -f1" would work
+			if someone wanted to find the username associated with UID 1000, they could enter "getent passwd 1000 | cut -d: -f1"
+		
