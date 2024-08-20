@@ -2,7 +2,7 @@ Setup and Dependencies:
 	Install Flask via pip: pip install Flask
 
 Directory Structure:
-	banking_api/
+	Banking/
 	├── app.py
 	├── services.py
 	├── repositories.py
