@@ -4,7 +4,6 @@ Setup and Dependencies:
 Directory Structure:
 	banking_api/
 	├── app.py
-	├── controllers.py
 	├── services.py
 	├── repositories.py
 	├── models.py
