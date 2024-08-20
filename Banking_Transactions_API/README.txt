@@ -11,7 +11,7 @@ Directory Structure:
 
 Running the Application:
 	Run the Flask application with the following command:
-		python controllers.py
+		python app.py
 	Your API will be available at http://127.0.0.1:5000
 		You can test it using tools like curl, Postman, or httpie as well if you comment out the following:
 			app = Flask(__name__, static_folder='static', template_folder='templates')
