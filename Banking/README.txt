@@ -28,9 +28,9 @@ Explanation:
 	This code covers all the essential aspects of the problem, including endpoint paths, dependency injection, DTO usage, input validation, and error handling.
 
 Example CURL Commands:
-curl -X POST http://localhost:5000/users -H "Content-Type: application/json" -d "{\"user\": \"user1\", \"initial_balance\": 1000}"
-curl -X POST http://localhost:5000/users -H "Content-Type: application/json" -d "{\"user\": \"user2\", \"initial_balance\": 0}"
-curl -X POST http://localhost:5000/transfer -H "Content-Type: application/json" -d "{\"sending\": \"user1\", \"receiving\": \"user2\", \"amount\": 2000}"
-curl -X POST http://localhost:5000/transfer -H "Content-Type: application/json" -d "{\"sending\": \"user1\", \"receiving\": \"user2\", \"amount\": 200}"
-curl -X GET http://localhost:5000/transactions/user1
-curl -X POST http://localhost:5000/transfer -H "Content-Type: application/json" -d "{\"sending\": \"invalid_user\", \"receiving\": \"user2\", \"amount\": 100}"
+	curl -X POST http://localhost:5000/users -H "Content-Type: application/json" -d "{\"user\": \"user1\", \"initial_balance\": 1000}"
+	curl -X POST http://localhost:5000/users -H "Content-Type: application/json" -d "{\"user\": \"user2\", \"initial_balance\": 0}"
+	curl -X POST http://localhost:5000/transfer -H "Content-Type: application/json" -d "{\"sending\": \"user1\", \"receiving\": \"user2\", \"amount\": 2000}"
+	curl -X POST http://localhost:5000/transfer -H "Content-Type: application/json" -d "{\"sending\": \"user1\", \"receiving\": \"user2\", \"amount\": 200}"
+	curl -X GET http://localhost:5000/transactions/user1
+	curl -X POST http://localhost:5000/transfer -H "Content-Type: application/json" -d "{\"sending\": \"invalid_user\", \"receiving\": \"user2\", \"amount\": 100}"
