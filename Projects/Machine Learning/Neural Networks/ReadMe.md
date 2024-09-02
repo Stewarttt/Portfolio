@@ -1,4 +1,4 @@
-# Project Report: Image Classification with CIFAR-10
+# Image Classification with CIFAR-10
 
 ## Main Objective of the Analysis
 
